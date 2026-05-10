@@ -3,12 +3,12 @@ import java.util.Scanner;
 
 class Noticia {
     String texto;
-    Classificacao classificacao;
+    String classificacao;
 
     Noticia() {   
     }
 
-    Noticia(String texto, Classificacao classificacao) {
+    Noticia(String texto, String classificacao) {
         this.setTexto(texto);
         this.setClassificacao(classificacao);
     }
@@ -17,11 +17,11 @@ class Noticia {
         return texto;
     }
 
-    public Classificacao getClassificacao() {
+    public String getClassificacao() {
         return classificacao;
     }
 
-    public void setClassificacao(Classificacao classificacao) {
+    public void setClassificacao(String classificacao) {
         this.classificacao = classificacao;
     }
 
@@ -105,30 +105,30 @@ public class Sistema {
     static ArrayList<Noticia> listaDeNoticias = new ArrayList<>();
 
     // função que faz tudo
-    public static void f(String a, String b) {
+    public static void adicionaNoticia(String texto, String classificacao) {
         // adiciona coisa
-        if (a != null && !a.equals("")) {
+        if (texto != null && !texto.equals("")) {
             Noticia novaNoticia = new Noticia();
-            novaNoticia.texto = a;
+            novaNoticia.texto = texto;
 
-            if (b == null || b.equals("")) {
-                novaNoticia.classificacao = Classificacao.DUVIDOSA;
+            if (classificacao == null || classificacao.equals("")) {
+                novaNoticia.classificacao = Classificacao.DUVIDOSA.getValor();
             } else {
-                novaNoticia.classificacao = Classificacao.valueOf(b.toUpperCase());
+                novaNoticia.classificacao = classificacao;
             }
 
             listaDeNoticias.add(novaNoticia);
         } else {
-            System.out.println("erro");
+            mostrarMensagemTerminal("Erro: texto invalido.", true);
         }
     }
 
     public static void listarNoticias() {
         // lista tudo
         for (int i = 0; i < listaDeNoticias.size(); i++) {
-            System.out.println("Texto: " + listaDeNoticias.get(i).texto);
-            System.out.println("Classificacao: " + listaDeNoticias.get(i).classificacao.getValor());
-            System.out.println("-------------------");
+            mostrarMensagemTerminal("Texto: " + listaDeNoticias.get(i).texto, true);
+            mostrarMensagemTerminal("Classificacao: " + listaDeNoticias.get(i).classificacao, true);
+            mostrarMensagemTerminal("-------------------", true);
         }
     }
 
@@ -158,45 +158,40 @@ public class Sistema {
     }
 
     public static void addNoticiaECalssificacaoManual(Scanner sc) {
-        System.out.print("Digite o texto: ");
-        String texto = sc.nextLine();
+        String texto = lerString(sc, "Digite o texto: ");
 
-        System.out.print("Digite classificacao: ");
-        String classificacao = sc.nextLine();
+        String classificacao = lerString(sc, "Digite classificacao: ");
 
         if (classificacao.equals("")) {
-            f(texto, null);
+            adicionaNoticia(texto, null);
         } else {
-            f(texto, classificacao);
+            adicionaNoticia(texto, classificacao);
         }
     }
 
     public static void addNoticiaEClassificarAutomaticamente(Scanner sc) {
-        System.out.print("Digite o texto: ");
-        String texto = sc.nextLine();
+        String texto = lerString(sc, "Digite o texto: ");
 
         String classificacao = analisar(texto);
-        f(texto, classificacao);
+        adicionaNoticia(texto, classificacao);
     }
 
     public static void menu() {
         Scanner scannerComandosOperacoes = new Scanner(System.in);
 
         while (true) {
-            System.out.println("1 - adicionar manual");
-            System.out.println("2 - adicionar automatico");
-            System.out.println("3 - listar");
-            System.out.println("4 - sair");
+            MenuOpcoes[] opcoes = MenuOpcoes.values();
+            mostrarMenu(opcoes);
 
-            String operacao = scannerComandosOperacoes.nextLine();
+            Integer operacao = lerInt(scannerComandosOperacoes, "Digite uma operacao: ");
 
-            if (operacao.equals("1")) {
+            if (operacao == MenuOpcoes.ADICIONAR_MANUAL.getValor()) {
                 addNoticiaECalssificacaoManual(scannerComandosOperacoes);
-            } else if (operacao.equals("2")) {
+            } else if (operacao.equals(MenuOpcoes.ADICIONAR_AUTOMATICO.getValor())) {
                 addNoticiaEClassificarAutomaticamente(scannerComandosOperacoes);
-            } else if (operacao.equals("3")) {
+            } else if (operacao.equals(MenuOpcoes.LISTAR.getValor())) {
                 listarNoticias();
-            } else if (operacao.equals("4")) {
+            } else if (operacao.equals(MenuOpcoes.SAIR.getValor())) {
                 scannerComandosOperacoes.close();
                 break;
             } else {
@@ -205,6 +200,45 @@ public class Sistema {
         }
 
         scannerComandosOperacoes.close();
+    }
+
+    public static String lerString(Scanner sc, String mensagem){
+        System.out.print(mensagem);
+        return sc.nextLine();
+    }
+
+    public static int lerInt(Scanner sc, String mensagem){
+        System.out.print(mensagem);
+        return sc.nextInt();
+    }
+
+    public static void mostrarMensagemTerminal(String mensagem, Boolean pularLinha){
+        if(pularLinha){
+            System.out.println(mensagem);
+        } else {
+            System.out.print(mensagem);
+        }
+    }
+
+    public static void mostrarMenu(MenuOpcoes[] opcoes){
+        for (int i = 0; i < opcoes.length; i++) {
+            mostrarMensagemTerminal(opcoes[i].getValor() + " - " + opcoes[i].getDescricao(), true);
+        }
+    }
+
+    public static String formatarTexto(String texto){
+        texto = texto.trim();
+        if (texto == null || texto.equals("")) {
+            return null;
+        }
+        return texto;
+    }
+
+    public static boolean validarTexto(String texto){
+        if (texto == null || texto.trim().equals("")) {
+            return false;
+        }
+        return true;
     }
 
     // inicia programa
