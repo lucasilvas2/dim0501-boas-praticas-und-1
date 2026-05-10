@@ -1,26 +1,95 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class D {
-    String t;
-    String c;
+class Noticia {
+    String texto;
+    Classificacao classificacao;
+}
+
+enum Classificacao {
+    CONFIAVEL("confiavel"), DUVIDOSA("duvidosa"), FALSA("falsa");
+
+    private final String valor;
+
+    Classificacao(String valor) {
+        this.valor = valor;
+    }
+
+    public String getValor() {
+        return valor;
+    }
+}
+
+enum PalavrasChave{
+    
+    FONTE("FONTE"), URGENTE("URGENTE"), EXCLAMACAO("!!!");
+
+    private final String valor;
+
+    PalavrasChave(String valor) {
+        this.valor = valor;
+    }
+
+    public String getValor() {
+        return valor;
+    }
+}
+
+enum Score {
+    MINIMO(0),
+    MEDIO(1),
+    MAXIMO(2);
+
+    private final int valor;
+
+    Score(int valor) {
+        this.valor = valor;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+}
+
+enum MenuOpcoes {
+    ADICIONAR_MANUAL(1, "Adicionar noticia manualmente"),
+    ADICIONAR_AUTOMATICO(2, "Adicionar noticia e classificala automaticamente"),
+    LISTAR(3, "Listar todas as noticias"),
+    SAIR(4, "Sair do sistema");
+
+    private final int valor;
+    private final String descricao;
+
+    MenuOpcoes(int valor, String descricao) {
+        this.valor = valor;
+        this.descricao = descricao;
+    }
+
+    public int getValor() {
+        return valor;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
 }
 
 public class Sistema {
 
-    static ArrayList<D> data = new ArrayList<>();
+    public static final int QUANTIDADE_DE_CARACTERES_MINIMO = 10;
+    static ArrayList<Noticia> data = new ArrayList<>();
 
     // função que faz tudo
     public static void f(String a, String b) {
         // adiciona coisa
         if (a != null && !a.equals("")) {
-            D d = new D();
-            d.t = a;
+            Noticia d = new Noticia();
+            d.texto = a;
 
             if (b == null || b.equals("")) {
-                d.c = "duvidosa";
+                d.classificacao = Classificacao.DUVIDOSA;
             } else {
-                d.c = b;
+                d.classificacao = Classificacao.valueOf(b.toUpperCase());
             }
 
             data.add(d);
@@ -32,8 +101,8 @@ public class Sistema {
     public static void func2() {
         // lista tudo
         for (int i = 0; i < data.size(); i++) {
-            System.out.println("Texto: " + data.get(i).t);
-            System.out.println("Classificacao: " + data.get(i).c);
+            System.out.println("Texto: " + data.get(i).texto);
+            System.out.println("Classificacao: " + data.get(i).classificacao.getValor());
             System.out.println("-------------------");
         }
     }
