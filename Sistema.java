@@ -1,120 +1,26 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-class Noticia {
-    String texto;
-    String classificacao;
-
-    Noticia() {   
-    }
-
-    Noticia(String texto, String classificacao) {
-        this.setTexto(texto);
-        this.setClassificacao(classificacao);
-    }
-
-    public String getTexto() {
-        return texto;
-    }
-
-    public String getClassificacao() {
-        return classificacao;
-    }
-
-    public void setClassificacao(String classificacao) {
-        this.classificacao = classificacao;
-    }
-
-    public void setTexto(String texto) {
-        this.texto = texto;
-    }
-
-}
-
-enum Classificacao {
-    CONFIAVEL("confiavel"), DUVIDOSA("duvidosa"), FALSA("falsa");
-
-    private final String valor;
-
-    Classificacao(String valor) {
-        this.valor = valor;
-    }
-
-    public String getValor() {
-        return valor;
-    }
-}
-
-enum PalavrasChave{
-    
-    FONTE("FONTE"), URGENTE("URGENTE"), EXCLAMACAO("!!!");
-
-    private final String valor;
-
-    PalavrasChave(String valor) {
-        this.valor = valor;
-    }
-
-    public String getValor() {
-        return valor;
-    }
-}
-
-enum Score {
-    MINIMO(0),
-    MEDIO(1),
-    MAXIMO(2);
-
-    private final int valor;
-
-    Score(int valor) {
-        this.valor = valor;
-    }
-
-    public int getValor() {
-        return valor;
-    }
-}
-
-enum MenuOpcoes {
-    ADICIONAR_MANUAL(1, "Adicionar noticia manualmente"),
-    ADICIONAR_AUTOMATICO(2, "Adicionar noticia e classificala automaticamente"),
-    LISTAR(3, "Listar todas as noticias"),
-    SAIR(4, "Sair do sistema");
-
-    private final int valor;
-    private final String descricao;
-
-    MenuOpcoes(int valor, String descricao) {
-        this.valor = valor;
-        this.descricao = descricao;
-    }
-
-    public int getValor() {
-        return valor;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-}
+import Enums.Classificacao;
+import Enums.PalavrasChave;
+import Enums.Score;
+import Enums.MenuOpcoes;
+import Models.Noticia;
 
 public class Sistema {
 
     public static final int QUANTIDADE_DE_CARACTERES_MINIMO = 10;
     static ArrayList<Noticia> listaDeNoticias = new ArrayList<>();
 
-    // função que faz tudo
     public static void adicionaNoticia(String texto, String classificacao) {
-        // adiciona coisa
-        if (texto != null && !texto.equals("")) {
+        if (textoValido(texto)) {
             Noticia novaNoticia = new Noticia();
-            novaNoticia.texto = texto;
+            novaNoticia.setTexto(texto);
 
-            if (classificacao == null || classificacao.equals("")) {
-                novaNoticia.classificacao = Classificacao.DUVIDOSA.getValor();
+            if (!textoValido(classificacao)) {
+                novaNoticia.setClassificacao(Classificacao.DUVIDOSA.getValor());
             } else {
-                novaNoticia.classificacao = classificacao;
+                novaNoticia.setClassificacao(classificacao);
             }
 
             listaDeNoticias.add(novaNoticia);
@@ -126,8 +32,8 @@ public class Sistema {
     public static void listarNoticias() {
         // lista tudo
         for (int i = 0; i < listaDeNoticias.size(); i++) {
-            mostrarMensagemTerminal("Texto: " + listaDeNoticias.get(i).texto, true);
-            mostrarMensagemTerminal("Classificacao: " + listaDeNoticias.get(i).classificacao, true);
+            mostrarMensagemTerminal("Texto: " + listaDeNoticias.get(i).getTexto(), true);
+            mostrarMensagemTerminal("Classificacao: " + listaDeNoticias.get(i).getClassificacao(), true);
             mostrarMensagemTerminal("-------------------", true);
         }
     }
@@ -148,9 +54,9 @@ public class Sistema {
             score = score + 1;
         }
 
-        if (score == 0) {
+        if (score == Score.MINIMO.getValor()) {
             return Classificacao.CONFIAVEL.getValor();
-        } else if (score == 1) {
+        } else if (score == Score.MEDIO.getValor()) {
             return Classificacao.DUVIDOSA.getValor();
         } else {
             return Classificacao.FALSA.getValor();
@@ -195,7 +101,7 @@ public class Sistema {
                 scannerComandosOperacoes.close();
                 break;
             } else {
-                System.out.println("errado");
+                System.out.println("Erro: Operacao invalida");
             }
         }
 
@@ -209,7 +115,11 @@ public class Sistema {
 
     public static int lerInt(Scanner sc, String mensagem){
         System.out.print(mensagem);
-        return sc.nextInt();
+        try {
+            return Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e) {
+            return -1; // Retorna um valor inválido para o menu tratar
+        }
     }
 
     public static void mostrarMensagemTerminal(String mensagem, Boolean pularLinha){
@@ -234,11 +144,8 @@ public class Sistema {
         return texto;
     }
 
-    public static boolean validarTexto(String texto){
-        if (texto == null || texto.trim().equals("")) {
-            return false;
-        }
-        return true;
+    public static boolean textoValido(String texto){
+        return texto != null && !texto.trim().equals("");
     }
 
     // inicia programa
