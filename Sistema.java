@@ -30,7 +30,6 @@ public class Sistema {
     }
 
     public static void listarNoticias() {
-        // lista tudo
         for (int i = 0; i < listaDeNoticias.size(); i++) {
             mostrarMensagemTerminal("Texto: " + listaDeNoticias.get(i).getTexto(), true);
             mostrarMensagemTerminal("Classificacao: " + listaDeNoticias.get(i).getClassificacao(), true);
@@ -38,22 +37,8 @@ public class Sistema {
         }
     }
 
-    public static String analisar(String txt) {
-        int score = 0;
-
-        if (!txt.contains(PalavrasChave.FONTE.getValor())) {
-            score = score + 1;
-        }
-        if (txt.contains(PalavrasChave.EXCLAMACAO.getValor())) {
-            score = score + 1;
-        }
-        if (txt.contains(PalavrasChave.URGENTE.getValor())) {
-            score = score + 1;
-        }
-        if (txt.length() < QUANTIDADE_DE_CARACTERES_MINIMO) {
-            score = score + 1;
-        }
-
+    public static String analisarNoticia(String texto) {
+        int score = calcularScore(texto);
         if (score == Score.MINIMO.getValor()) {
             return Classificacao.CONFIAVEL.getValor();
         } else if (score == Score.MEDIO.getValor()) {
@@ -61,6 +46,25 @@ public class Sistema {
         } else {
             return Classificacao.FALSA.getValor();
         }
+    }
+
+    public static int calcularScore(String texto) {
+        int score = 0;
+
+        if (!texto.contains(PalavrasChave.FONTE.getValor())) {
+            score = score + 1;
+        }
+        if (texto.contains(PalavrasChave.EXCLAMACAO.getValor())) {
+            score = score + 1;
+        }
+        if (texto.contains(PalavrasChave.URGENTE.getValor())) {
+            score = score + 1;
+        }
+        if (texto.length() < QUANTIDADE_DE_CARACTERES_MINIMO) {
+            score = score + 1;
+        }
+
+        return score;
     }
 
     public static void addNoticiaECalssificacaoManual(Scanner sc) {
@@ -78,7 +82,7 @@ public class Sistema {
     public static void addNoticiaEClassificarAutomaticamente(Scanner sc) {
         String texto = lerString(sc, "Digite o texto: ");
 
-        String classificacao = analisar(texto);
+        String classificacao = analisarNoticia(texto);
         adicionaNoticia(texto, classificacao);
     }
 
