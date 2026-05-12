@@ -1,5 +1,7 @@
 import java.util.Scanner;
 import Infrastructure.Console;
+import Infrastructure.MemoryNoticia;
+import Repositories.NoticiaRepository;
 import Services.NoticiaService;
 import UI.NoticiaUI;
 import Interfaces.IODevice;
@@ -8,7 +10,9 @@ public class Main {
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             IODevice ioDevice = new Console(scanner);
-            NoticiaService service = new NoticiaService(ioDevice);
+            NoticiaRepository noticiaRepository = new MemoryNoticia();
+            NoticiaService service = new NoticiaService(ioDevice, noticiaRepository);
+            
             NoticiaUI ui = new NoticiaUI(service, ioDevice);
             
             ui.iniciar();
