@@ -2,7 +2,6 @@ package Services;
 import java.util.ArrayList;
 
 import Models.Noticia;
-import Interfaces.IODevice;
 import Repositories.NoticiaRepository;
 
 public class NoticiaService {
