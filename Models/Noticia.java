@@ -88,6 +88,9 @@ public class Noticia {
 
     @Override
     public String toString() {
-        return "Texto: " + texto + " | Classificacao: " + classificacao + " | Score: " + score;
+        String nl = System.lineSeparator();
+        return "Texto: " + texto + nl +
+               "Classificação: " + classificacao + nl +
+               "-------------------";
     }
 }

@@ -11,8 +11,7 @@ public class Main {
         try (Scanner scanner = new Scanner(System.in)) {
             IODevice ioDevice = new Console(scanner);
             NoticiaRepository noticiaRepository = new MemoryNoticia();
-            NoticiaService service = new NoticiaService(ioDevice, noticiaRepository);
-            
+            NoticiaService service = new NoticiaService(noticiaRepository);
             NoticiaUI ui = new NoticiaUI(service, ioDevice);
             
             ui.iniciar();

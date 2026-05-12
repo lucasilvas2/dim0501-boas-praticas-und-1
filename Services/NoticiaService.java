@@ -8,32 +8,21 @@ import Repositories.NoticiaRepository;
 public class NoticiaService {
 
     NoticiaRepository noticiaRepository;
-    IODevice ioDevice;
 
-    public NoticiaService(IODevice ioDevice, NoticiaRepository noticiaRepository) {
-        this.ioDevice = ioDevice;
+    public NoticiaService(NoticiaRepository noticiaRepository) {
         this.noticiaRepository = noticiaRepository;
     }
 
-    public void listarNoticias() {
-        for (int i = 0; i < noticiaRepository.listarNoticias().size(); i++) {
-            ioDevice.mostrarMensagemTerminal("Texto: " + noticiaRepository.listarNoticias().get(i).getTexto(), true);
-            ioDevice.mostrarMensagemTerminal("Classificacao: " + noticiaRepository.listarNoticias().get(i).getClassificacao(), true);
-            ioDevice.mostrarMensagemTerminal("-------------------", true);
-        }
+    public ArrayList<Noticia> listarNoticias() {
+        return noticiaRepository.listarNoticias();
     }
 
-    public void adicionarNoticiaManual() {
-        String texto = ioDevice.lerString("Digite o texto: ");
-
-        String classificacao = ioDevice.lerString("Digite classificacao: ");
+    public void adicionarNoticiaManual(String texto, String classificacao) {
         Noticia noticia = new Noticia(texto, classificacao);
         noticiaRepository.salvarNoticia(noticia);
     }
 
-    public void adicionarNoticiaAutomaticamente() {
-        String texto = ioDevice.lerString("Digite o texto: ");
-
+    public void adicionarNoticiaAutomaticamente(String texto) {
         Noticia noticia = new Noticia(texto);
         noticiaRepository.salvarNoticia(noticia);
     }

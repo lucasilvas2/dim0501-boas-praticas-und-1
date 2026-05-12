@@ -1,5 +1,6 @@
 package UI;
 
+import Models.Noticia;
 import Interfaces.IODevice;
 import Services.NoticiaService;
 import Enums.MenuOpcoes;
@@ -24,11 +25,16 @@ public class NoticiaUI {
 
             try{
                 if (operacao == MenuOpcoes.ADICIONAR_MANUAL.getValor()) {
-                    this.service.adicionarNoticiaManual();
+                    String texto = ioDevice.lerString("Digite o texto: ");
+
+                    String classificacao = ioDevice.lerString("Digite classificacao: ");
+                    this.service.adicionarNoticiaManual(texto, classificacao);
                 } else if (operacao.equals(MenuOpcoes.ADICIONAR_AUTOMATICO.getValor())) {
-                    this.service.adicionarNoticiaAutomaticamente();
+                    String texto = ioDevice.lerString("Digite o texto: ");
+                    this.service.adicionarNoticiaAutomaticamente(texto);
                 } else if (operacao.equals(MenuOpcoes.LISTAR.getValor())) {
-                    this.service.listarNoticias();
+                    ArrayList<Noticia> noticias = this.service.listarNoticias();
+                    listarNoticias(noticias);
                 } else if (operacao.equals(MenuOpcoes.SAIR.getValor())) {
                     ioDevice.close();
                     break;
@@ -41,11 +47,15 @@ public class NoticiaUI {
         }
     }
 
+    private void listarNoticias(ArrayList<Noticia> noticias) {
+        for (Noticia noticia : noticias) {
+            ioDevice.mostrarMensagemTerminal(noticia.toString(), true);
+        }
+    }
+
     public void mostrarMenu(MenuOpcoes[] opcoes){
         for (int i = 0; i < opcoes.length; i++) {
             ioDevice.mostrarMensagemTerminal(opcoes[i].getValor() + " - " + opcoes[i].getDescricao(), true);
         }
     }
-
-   
 }
