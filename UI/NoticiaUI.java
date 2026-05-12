@@ -21,25 +21,28 @@ public class NoticiaUI {
             MenuOpcoes[] opcoes = MenuOpcoes.values();
             mostrarMenu(opcoes);
 
-            Integer operacao = ioDevice.lerInt("Digite uma operacao: ");
+            int operacao = ioDevice.lerInt("Digite uma operacao: ");
 
             try{
-                if (operacao == MenuOpcoes.ADICIONAR_MANUAL.getValor()) {
-                    String texto = ioDevice.lerString("Digite o texto: ");
-
-                    String classificacao = ioDevice.lerString("Digite classificacao: ");
-                    this.service.adicionarNoticiaManual(texto, classificacao);
-                } else if (operacao.equals(MenuOpcoes.ADICIONAR_AUTOMATICO.getValor())) {
-                    String texto = ioDevice.lerString("Digite o texto: ");
-                    this.service.adicionarNoticiaAutomaticamente(texto);
-                } else if (operacao.equals(MenuOpcoes.LISTAR.getValor())) {
-                    ArrayList<Noticia> noticias = this.service.listarNoticias();
-                    listarNoticias(noticias);
-                } else if (operacao.equals(MenuOpcoes.SAIR.getValor())) {
-                    ioDevice.close();
-                    break;
-                } else {
-                    ioDevice.mostrarMensagemTerminal("Erro: Operacao invalida", true);
+                switch(operacao){
+                    case 1: 
+                        String texto1 = ioDevice.lerString("Digite o texto: ");
+                        String classificacao1 = ioDevice.lerString("Digite classificacao: ");
+                        this.service.adicionarNoticiaManual(texto1, classificacao1);
+                        break;  
+                    case 2: 
+                        String texto2 = ioDevice.lerString("Digite o texto: ");
+                        this.service.adicionarNoticiaAutomaticamente(texto2);
+                        break;
+                    case 3: 
+                        ArrayList<Noticia> noticias = this.service.listarNoticias();
+                        listarNoticias(noticias);
+                        break;
+                    case 4: 
+                        break;
+                    default: 
+                        ioDevice.mostrarMensagemTerminal("Erro: Operacao invalida", true);
+                        break;
                 }
             }catch(IllegalArgumentException e){
                 ioDevice.mostrarMensagemTerminal("Erro: " + e.getMessage(), true);
