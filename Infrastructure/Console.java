@@ -27,7 +27,7 @@ public class Console implements IODevice {
     }
 
     @Override
-    public void mostrarMensagemTerminal(String mensagem, Boolean pularLinha){
+    public void mostrarMensagemTerminal(String mensagem, boolean pularLinha){
         if(pularLinha){
             System.out.println(mensagem);
         } else {
