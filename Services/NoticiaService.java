@@ -1,18 +1,24 @@
+package Services;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import Enums.Classificacao;
 import Enums.PalavrasChave;
 import Enums.Score;
 import Enums.MenuOpcoes;
 import Models.Noticia;
+import Interfaces.IODevice;
 
-public class Sistema {
+public class NoticiaService {
 
     public static final int QUANTIDADE_DE_CARACTERES_MINIMO = 10;
     static ArrayList<Noticia> listaDeNoticias = new ArrayList<>();
+    IODevice ioDevice;
 
-    public static void adicionaNoticia(String texto, String classificacao) {
+    public NoticiaService(IODevice ioDevice) {
+        this.ioDevice = ioDevice;
+    }
+
+    public void adicionaNoticia(String texto, String classificacao) {
         if (textoValido(texto)) {
             Noticia novaNoticia = new Noticia();
             novaNoticia.setTexto(texto);
@@ -25,27 +31,24 @@ public class Sistema {
 
             listaDeNoticias.add(novaNoticia);
         } else {
-            mostrarMensagemTerminal("Erro: texto invalido.", true);
+            ioDevice.mostrarMensagemTerminal("Erro: texto invalido.", true);
         }
     }
 
-    public static void listarNoticias() {
+    public void listarNoticias() {
         for (int i = 0; i < listaDeNoticias.size(); i++) {
-            mostrarMensagemTerminal("Texto: " + listaDeNoticias.get(i).getTexto(), true);
-            mostrarMensagemTerminal("Classificacao: " + listaDeNoticias.get(i).getClassificacao(), true);
-            mostrarMensagemTerminal("-------------------", true);
+            ioDevice.mostrarMensagemTerminal("Texto: " + listaDeNoticias.get(i).getTexto(), true);
+            ioDevice.mostrarMensagemTerminal("Classificacao: " + listaDeNoticias.get(i).getClassificacao(), true);
+            ioDevice.mostrarMensagemTerminal("-------------------", true);
         }
     }
 
     public static String analisarNoticia(String texto) {
         int score = calcularScore(texto);
-        if (score == Score.MINIMO.getValor()) {
-            return Classificacao.CONFIAVEL.getValor();
-        } else if (score == Score.MEDIO.getValor()) {
-            return Classificacao.DUVIDOSA.getValor();
-        } else {
-            return Classificacao.FALSA.getValor();
-        }
+
+        if (score <= Score.MINIMO.getValor()) return Classificacao.CONFIAVEL.getValor();
+        if (score <= Score.MEDIO.getValor()) return Classificacao.DUVIDOSA.getValor();
+        return Classificacao.FALSA.getValor();
     }
 
     public static int calcularScore(String texto) {
@@ -67,10 +70,10 @@ public class Sistema {
         return score;
     }
 
-    public static void addNoticiaECalssificacaoManual(Scanner sc) {
-        String texto = lerString(sc, "Digite o texto: ");
+    public void addNoticiaECalssificacaoManual() {
+        String texto = ioDevice.lerString("Digite o texto: ");
 
-        String classificacao = lerString(sc, "Digite classificacao: ");
+        String classificacao = ioDevice.lerString("Digite classificacao: ");
 
         if (classificacao.equals("")) {
             adicionaNoticia(texto, null);
@@ -79,64 +82,41 @@ public class Sistema {
         }
     }
 
-    public static void addNoticiaEClassificarAutomaticamente(Scanner sc) {
-        String texto = lerString(sc, "Digite o texto: ");
+    public void addNoticiaEClassificarAutomaticamente() {
+        String texto = ioDevice.lerString("Digite o texto: ");
 
         String classificacao = analisarNoticia(texto);
         adicionaNoticia(texto, classificacao);
     }
 
-    public static void menu() {
-        Scanner scannerComandosOperacoes = new Scanner(System.in);
+    public void iniciar() {
 
         while (true) {
             MenuOpcoes[] opcoes = MenuOpcoes.values();
             mostrarMenu(opcoes);
 
-            Integer operacao = lerInt(scannerComandosOperacoes, "Digite uma operacao: ");
+            Integer operacao = ioDevice.lerInt("Digite uma operacao: ");
 
             if (operacao == MenuOpcoes.ADICIONAR_MANUAL.getValor()) {
-                addNoticiaECalssificacaoManual(scannerComandosOperacoes);
+                addNoticiaECalssificacaoManual();
             } else if (operacao.equals(MenuOpcoes.ADICIONAR_AUTOMATICO.getValor())) {
-                addNoticiaEClassificarAutomaticamente(scannerComandosOperacoes);
+                addNoticiaEClassificarAutomaticamente();
             } else if (operacao.equals(MenuOpcoes.LISTAR.getValor())) {
                 listarNoticias();
             } else if (operacao.equals(MenuOpcoes.SAIR.getValor())) {
-                scannerComandosOperacoes.close();
+                ioDevice.close();
                 break;
             } else {
-                System.out.println("Erro: Operacao invalida");
+                ioDevice.mostrarMensagemTerminal("Erro: Operacao invalida", true);
             }
         }
 
-        scannerComandosOperacoes.close();
+        ioDevice.close();
     }
 
-    public static String lerString(Scanner sc, String mensagem){
-        System.out.print(mensagem);
-        return sc.nextLine();
-    }
-
-    public static int lerInt(Scanner sc, String mensagem){
-        System.out.print(mensagem);
-        try {
-            return Integer.parseInt(sc.nextLine());
-        } catch (NumberFormatException e) {
-            return -1; // Retorna um valor inválido para o menu tratar
-        }
-    }
-
-    public static void mostrarMensagemTerminal(String mensagem, Boolean pularLinha){
-        if(pularLinha){
-            System.out.println(mensagem);
-        } else {
-            System.out.print(mensagem);
-        }
-    }
-
-    public static void mostrarMenu(MenuOpcoes[] opcoes){
+    public void mostrarMenu(MenuOpcoes[] opcoes){
         for (int i = 0; i < opcoes.length; i++) {
-            mostrarMensagemTerminal(opcoes[i].getValor() + " - " + opcoes[i].getDescricao(), true);
+            ioDevice.mostrarMensagemTerminal(opcoes[i].getValor() + " - " + opcoes[i].getDescricao(), true);
         }
     }
 
@@ -150,10 +130,5 @@ public class Sistema {
 
     public static boolean textoValido(String texto){
         return texto != null && !texto.trim().equals("");
-    }
-
-    // inicia programa
-    public static void main(String[] args) {
-        menu();
     }
 }
