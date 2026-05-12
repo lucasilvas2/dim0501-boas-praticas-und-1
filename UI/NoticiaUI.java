@@ -38,7 +38,9 @@ public class NoticiaUI {
                         ArrayList<Noticia> noticias = this.service.listarNoticias();
                         listarNoticias(noticias);
                         break;
-                    case 4: 
+                    case 4:
+                        ioDevice.close();
+                        System.exit(0);
                         break;
                     default: 
                         ioDevice.mostrarMensagemTerminal("Erro: Operacao invalida", true);
