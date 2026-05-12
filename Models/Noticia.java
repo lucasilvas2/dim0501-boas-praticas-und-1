@@ -24,7 +24,8 @@ public class Noticia {
             this.setClassificacao(classificacao);
         }
 
-        this.calcularScore();
+        int score = this.calcularScore();
+        this.setScore(score);
     }
 
     public String getTexto() {
