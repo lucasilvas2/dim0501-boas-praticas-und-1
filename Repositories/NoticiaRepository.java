@@ -3,7 +3,22 @@ package Repositories;
 import Models.Noticia;
 import java.util.ArrayList;
 
+/**
+ * Contrato para persistência de notícias.
+ */
 public interface NoticiaRepository {
-    public void salvarNoticia(Noticia noticia);
-    public ArrayList<Noticia> listarNoticias();
+
+    /**
+     * Persiste uma notícia.
+     *
+     * @param noticia notícia a ser salva
+     */
+    void salvarNoticia(Noticia noticia);
+
+    /**
+     * Retorna todas as notícias persistidas.
+     *
+     * @return lista de notícias; vazia se nenhuma foi salva
+     */
+    ArrayList<Noticia> listarNoticias();
 }
